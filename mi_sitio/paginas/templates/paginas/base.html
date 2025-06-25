@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>{% block title %}Mi Sitio Matrix{% endblock %}</title>
+<style>
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #000;
+    overflow: hidden;
+}
+#matrix {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
+nav {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 1rem;
+}
+nav a {
+    color: #00ff41;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 0 1rem;
+}
+nav a:hover {
+    text-decoration: underline;
+}
+.content {
+    position: relative;
+    z-index: 1;
+    color: #00ff41;
+    text-align: center;
+    padding: 40px;
+    font-size: 16px;
+    text-shadow:
+        0px 0px 5px #00ff41,
+        0px 0px 10px #00ff41,
+        0px 0px 20px #00ff41;
+}
+</style>
+</head>
+<body>
+<!-- Canvas Matrix -->
+<canvas id="matrix"></canvas>
+
+<!-- Menú de navegación -->
+<nav>
+    <a href="{% url 'inicio' %}">Inicio</a> |
+    <a href="{% url 'acerca' %}">Acerca</a> |
+    <a href="{% url 'contacto' %}">Contacto</a>
+</nav>
+
+<!-- Contenido de cada página -->
+<div class="content">
+    {% block content %}{% endblock %}
+</div>
+
+<!-- Script de Animación Matrix -->
+<script>
+const canvas = document.getElementById("matrix");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
+const fontSize = 16;
+const columns = Math.floor(window.innerWidth / fontSize);
+const drops = Array(columns).fill(1);
+
+function draw() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#00ff41"; 
+    ctx.font = fontSize + "px monospace";
+
+    for (let i = 0; i < drops.length; i++) {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+        }
+        drops[i]++;
+    }
+}
+setInterval(draw, 33);
+
+window.addEventListener("resize", () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+</script>
+</body>
+</html>
+
